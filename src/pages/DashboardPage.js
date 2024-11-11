@@ -1,8 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import { getTestMessage } from '../services/apiService';
 
 const DashboardPage = () => {
   const { setUser } = useContext(AuthContext);  // Access setUser from AuthContext
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const fetchMessage = async () => {
+      const response = await getTestMessage();
+      if (response) {
+        setMessage(response.message);
+      }
+    };
+    fetchMessage();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -15,6 +27,7 @@ const DashboardPage = () => {
   return (
     <div>
       <h1>Dashboard</h1>
+      {message && <p>{message}</p>}
       {user && (
         <div>
           <p>Welcome, {user.name}</p>

@@ -3,6 +3,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import CreateLeaguePage from './pages/CreateLeaguePage';
+import LeaguePage from './pages/LeaguePage';
 import DashboardPage from './pages/DashboardPage';
 import PrivateRoute from './components/PrivateRoute';
 import AuthProvider from './context/AuthContext';
@@ -20,6 +22,8 @@ function App() {
             <Route exact path="/" component={HomePage} />
             <Route path="/login" component={LoginPage} />
             <PrivateRoute path="/dashboard" component={DashboardPage} />
+            <Route path="/create-league" component={CreateLeaguePage} />
+            <Route path="/leagues" component={LeaguePage} />
           </Switch>
         </Router>
       </AuthProvider>
