@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { addTeamToLeague } from '../services/apiService';
+import { getLeagues, addTeamToLeague } from '../services/apiService';
+import { Container, Typography, Card, CardContent, CardActions, Button, TextField, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const LeaguePage = () => {
   const [leagues, setLeagues] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState(null);
   const [teamName, setTeamName] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeagues = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/get-leagues`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setLeagues(data);
+        const fetchedLeagues = await getLeagues();
+        setLeagues(fetchedLeagues);
       } catch (error) {
         console.error('Error fetching leagues:', error);
       }
@@ -26,35 +25,57 @@ const LeaguePage = () => {
     try {
       await addTeamToLeague(teamName, 'user123', leagueID);  // Replace 'user123' with actual user identification
       console.log('Team added to league');
+      navigate('/dashboard'); // Navigate to dashboard after joining a league
     } catch (error) {
       console.error('Error adding team to league:', error);
     }
   };
 
   return (
-    <div>
-      <h2>Leagues</h2>
-      <ul>
+    <Container maxWidth="md">
+      <Box mt={4}>
+        <Typography variant="h4" gutterBottom>
+          Leagues
+        </Typography>
         {leagues.map((league) => (
-          <li key={league.LeagueID}>
-            {league.LeagueName}
-            <button onClick={() => setSelectedLeague(league.LeagueID)}>Join</button>
-          </li>
+          <Card key={league.LeagueID} variant="outlined" style={{ marginBottom: '1rem' }}>
+            <CardContent>
+              <Typography variant="h5">{league.LeagueName}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                onClick={() => setSelectedLeague(league.LeagueID)}
+              >
+                Join
+              </Button>
+            </CardActions>
+          </Card>
         ))}
-      </ul>
-      {selectedLeague && (
-        <div>
-          <h3>Join League: {selectedLeague}</h3>
-          <input
-            type="text"
-            placeholder="Team Name"
-            value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-          />
-          <button onClick={() => handleJoinLeague(selectedLeague)}>Join League</button>
-        </div>
-      )}
-    </div>
+        {selectedLeague && (
+          <Box mt={4}>
+            <Typography variant="h5">Join League: {selectedLeague}</Typography>
+            <TextField
+              label="Team Name"
+              variant="outlined"
+              fullWidth
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              style={{ marginBottom: '1rem' }}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleJoinLeague(selectedLeague)}
+            >
+              Join League
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Container>
   );
 };
 

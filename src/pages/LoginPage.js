@@ -1,15 +1,13 @@
-// src/pages/LoginPage.js
 import React, { useContext, useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google'; // New package for Google Login
 import { AuthContext } from '../context/AuthContext';
-import { jwtDecode } from 'jwt-decode'; // Correct way to import as a named export
-import { useHistory } from 'react-router-dom';
-
-
+import {jwtDecode} from 'jwt-decode'; // Correct way to import
+import { useNavigate } from 'react-router-dom';
+import { Container, Typography, CircularProgress, Box } from '@mui/material';
 
 const LoginPage = () => {
-  const { setUser } = useContext(AuthContext);
-  const history = useHistory();
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSuccess = (credentialResponse) => {
@@ -18,9 +16,8 @@ const LoginPage = () => {
     const token = credentialResponse.credential;
     const user = jwtDecode(token);
 
-    localStorage.setItem('user', JSON.stringify(user));
-    setUser(user);
-    history.push('/dashboard');  // Redirect to dashboard after login
+    login(user);
+    navigate('/dashboard');  // Redirect to dashboard after login
   };
 
   const onFailure = (error) => {
@@ -29,14 +26,18 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <Container maxWidth="sm" style={{ marginTop: '4rem', textAlign: 'center' }}>
+      <Typography variant="h4" gutterBottom>
+        Login
+      </Typography>
       {isLoading ? (
-      <p>Loading...</p>
-    ) : (
-      <GoogleLogin onSuccess={onSuccess} onError={onFailure} useOneTap />
-    )}
-    </div>
+        <CircularProgress />
+      ) : (
+        <Box mt={4}>
+          <GoogleLogin onSuccess={onSuccess} onError={onFailure} useOneTap />
+        </Box>
+      )}
+    </Container>
   );
 };
 

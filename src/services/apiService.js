@@ -47,3 +47,40 @@ export const addTeamToLeague = async (teamName, userID, leagueID) => {
         console.error('Error adding team to league:', error);
     }
 };
+
+export const getLeagues = async () => {
+    try {
+      const response = await fetch(`${API_URL}/get-leagues`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching leagues:', error);
+    }
+  };
+
+export const getTeamInfo = async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/team/email/${userId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('There was an error fetching the team info:', error);
+    }
+};
+
+export const getMatchdayInfo = async (leagueId) => {
+    try {
+      const response = await fetch(`${API_URL}/matchday/leagueId/${leagueId}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching matchday info:', error);
+      throw error;
+    }
+};
