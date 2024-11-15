@@ -72,6 +72,30 @@ export const getTeamInfo = async (userId) => {
     }
 };
 
+export const saveTeamInfo = async (email, teamChanges) => {
+    try {
+      const response = await fetch(`${API_URL}/team/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          teamChanges,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      return await response.json();
+    } catch (error) {
+      console.error('Error saving team info:', error);
+      throw error;
+    }
+  };
+
 export const getMatchdayInfo = async (leagueId) => {
     try {
       const response = await fetch(`${API_URL}/matchday/leagueId/${leagueId}`);
