@@ -3,14 +3,13 @@ import React from 'react';
 import { Container, Typography, Box, Button, Grid, Card, CardContent, CardActions, CardMedia, AppBar, Toolbar, IconButton, Tabs, Tab } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu'; // Placeholder for an icon
-import welcomeImg from '../assets/teamCap.png'; // Placeholder welcome image
 import { styled } from '@mui/system';
 
 const WelcomeContainer = styled(Box)(({ theme }) => ({
   position: 'relative',
   width: '100%',
   height: '100vh',
-  backgroundImage: `url(${welcomeImg})`,
+  backgroundImage: `url(/assets/images/teamCap.png)`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   display: 'flex',

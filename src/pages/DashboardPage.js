@@ -1,38 +1,71 @@
+// src/pages/DashboardPage.js
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Box, Grid2, Card, CardContent, CardMedia, CircularProgress, Button, Checkbox, FormControlLabel } from '@mui/material';
+import { Container, Box, Button, CircularProgress, Checkbox, FormControlLabel } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { getTeamInfo, saveTeamInfo } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
+import GroundBackground from '../components/GroundBackground';
+import PlayerOverlay from '../components/PlayerOverlay';
 
 const DashboardPage = () => {
   const { currentUser } = useAuth();
   const [userTeam, setUserTeam] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingSave, setLoadingSave] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [teamChanges, setTeamChanges] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        setLoading(true);
-        const userTeamData = await getTeamInfo(currentUser.email);
-        setUserTeam(userTeamData);
-      } catch (error) {
-        console.error('Error fetching team info:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTeam();
   }, [currentUser]);
 
+  const fetchTeam = async () => {
+    try {
+      setLoading(true);
+      const userTeamData = await getTeamInfo(currentUser.email);
+
+      // Categorize players based on roles
+      const categorizedPlayers = {
+        wicketkeepers: [],
+        batters: [],
+        allRounders: [],
+        bowlers: [],
+        bench: []
+      };
+
+      userTeamData.players.forEach((player) => {
+        if (player.IsStarter) {
+          if (player.Role === 'Wicketkeeper') {
+            categorizedPlayers.wicketkeepers.push(player);
+          } else if (player.Role === 'Batsman') {
+            categorizedPlayers.batters.push(player);
+          } else if (player.Role === 'All-Rounder') {
+            categorizedPlayers.allRounders.push(player);
+          } else if (player.Role === 'Bowler') {
+            categorizedPlayers.bowlers.push(player);
+          }
+        } else {
+          categorizedPlayers.bench.push(player);
+        }
+      });
+
+      setUserTeam(categorizedPlayers);
+      setTeamChanges(
+        userTeamData.players.reduce((acc, player) => {
+          acc[player.PlayerID] = player.IsStarter;
+          return acc;
+        }, {})
+      );
+    } catch (error) {
+      console.error('Error fetching team info:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEditClick = () => {
     setEditMode(true);
-    setTeamChanges(userTeam.players.reduce((acc, player) => {
-      acc[player.PlayerID] = player.IsStarter;
-      return acc;
-    }, {}));
   };
 
   const handleCheckboxChange = (playerId) => {
@@ -44,17 +77,14 @@ const DashboardPage = () => {
 
   const handleSaveClick = async () => {
     try {
-      setLoading(true);
-      console.log(teamChanges);
+      setLoadingSave(true);
       await saveTeamInfo(currentUser.email, teamChanges);
-      // Refresh the team info after saving
-      const updatedTeam = await getTeamInfo(currentUser.email);
-      setUserTeam(updatedTeam);
       setEditMode(false);
+      await fetchTeam(); // Fetch updated team data to make sure changes reflect correctly
     } catch (error) {
       console.error('Error saving team info:', error);
     } finally {
-      setLoading(false);
+      setLoadingSave(false);
     }
   };
 
@@ -62,7 +92,7 @@ const DashboardPage = () => {
     navigate('/matchday');
   };
 
-  if (loading) {
+  if (loading || loadingSave) {
     return (
       <Container maxWidth="md" style={{ textAlign: 'center', marginTop: '4rem' }}>
         <CircularProgress />
@@ -72,64 +102,12 @@ const DashboardPage = () => {
 
   return (
     <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
-      <Typography variant="h4" gutterBottom>
-        Your Team
-      </Typography>
-      <Grid2 container spacing={4}>
-        {/* User's Team */}
-        <Grid2 item xs={12} md={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" gutterBottom>
-                Starting Players
-              </Typography>
-              {userTeam && userTeam.players.filter(player => player.IsStarter).map((player, index) => (
-                <Box key={index} mb={2} display="flex" alignItems="center">
-                  <CardMedia
-                    component="img"
-                    alt={player.PlayerName}
-                    image={`../assets/${player.Team}-logo.png`}
-                    title={player.PlayerName}
-                    style={{ width: 50, height: 50, marginRight: '1rem' }}
-                  />
-                  <Typography variant="body1" style={{ flex: 1 }}>
-                    {player.PlayerName} - {player.Role}
-                  </Typography>
-                  {editMode && (
-                    <FormControlLabel
-                      control={<Checkbox checked={teamChanges[player.PlayerID]} onChange={() => handleCheckboxChange(player.PlayerID)} />}
-                      label="Starter"
-                    />
-                  )}
-                </Box>
-              ))}
-              <Typography variant="h5" gutterBottom style={{ marginTop: '2rem' }}>
-                Bench Players
-              </Typography>
-              {userTeam && userTeam.players.filter(player => !player.IsStarter).map((player, index) => (
-                <Box key={index} mb={2} display="flex" alignItems="center">
-                  <CardMedia
-                    component="img"
-                    alt={player.PlayerName}
-                    image={`/assets/images/${player.Team.toLowerCase()}.png`}
-                    title={player.PlayerName}
-                    style={{ width: 50, height: 50, marginRight: '1rem' }}
-                  />
-                  <Typography variant="body1" style={{ flex: 1 }}>
-                    {player.PlayerName} - {player.Role}
-                  </Typography>
-                  {editMode && (
-                    <FormControlLabel
-                      control={<Checkbox checked={teamChanges[player.PlayerID]} onChange={() => handleCheckboxChange(player.PlayerID)} />}
-                      label="Starter"
-                    />
-                  )}
-                </Box>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid2>
-      </Grid2>
+      {userTeam && (
+        <GroundBackground>
+          {/* Display players on the field */}
+          <PlayerOverlay players={userTeam} editMode={editMode} handleCheckboxChange={handleCheckboxChange} teamChanges={teamChanges} />
+        </GroundBackground>
+      )}
       <Box mt={4} textAlign="center">
         {!editMode ? (
           <Button variant="contained" color="primary" onClick={handleEditClick}>
