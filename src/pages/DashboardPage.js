@@ -35,14 +35,14 @@ const DashboardPage = () => {
       };
 
       userTeamData.players.forEach((player) => {
-        if (player.IsStarter) {
-          if (player.Role === 'Wicketkeeper') {
+        if (player.is_starter) {
+          if (player.role === 'Wicketkeeper') {
             categorizedPlayers.wicketkeepers.push(player);
-          } else if (player.Role === 'Batsman') {
+          } else if (player.role === 'Batsman') {
             categorizedPlayers.batters.push(player);
-          } else if (player.Role === 'All-Rounder') {
+          } else if (player.role === 'All-Rounder') {
             categorizedPlayers.allRounders.push(player);
-          } else if (player.Role === 'Bowler') {
+          } else if (player.role === 'Bowler') {
             categorizedPlayers.bowlers.push(player);
           }
         } else {
@@ -53,7 +53,7 @@ const DashboardPage = () => {
       setUserTeam(categorizedPlayers);
       setTeamChanges(
         userTeamData.players.reduce((acc, player) => {
-          acc[player.PlayerID] = player.IsStarter;
+          acc[player.player_id] = player.is_starter;
           return acc;
         }, {})
       );
@@ -68,10 +68,10 @@ const DashboardPage = () => {
     setEditMode(true);
   };
 
-  const handleCheckboxChange = (playerId) => {
+  const handleCheckboxChange = (player_id) => {
     setTeamChanges((prevChanges) => ({
       ...prevChanges,
-      [playerId]: !prevChanges[playerId]
+      [player_id]: !prevChanges[player_id]
     }));
   };
 

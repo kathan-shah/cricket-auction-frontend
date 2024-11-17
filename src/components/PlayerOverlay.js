@@ -33,7 +33,7 @@ const PlayerOverlay = ({ players, editMode, handleCheckboxChange, teamChanges })
           <PlayerCard player={player} />
           {editMode && (
             <FormControlLabel
-              control={<Checkbox checked={teamChanges[player.PlayerID] ?? false} onChange={() => handleCheckboxChange(player.PlayerID)} />}
+              control={<Checkbox checked={teamChanges[player.player_id] ?? false} onChange={() => handleCheckboxChange(player.player_id)} />}
               label="Starter"
             />
           )}
@@ -53,7 +53,7 @@ const PlayerOverlay = ({ players, editMode, handleCheckboxChange, teamChanges })
           <PlayerCard player={player} />
           {editMode && (
             <FormControlLabel
-              control={<Checkbox checked={teamChanges[player.PlayerID] ?? false} onChange={() => handleCheckboxChange(player.PlayerID)} />}
+              control={<Checkbox checked={teamChanges[player.player_id] ?? false} onChange={() => handleCheckboxChange(player.player_id)} />}
               label="Starter"
             />
           )}
@@ -73,7 +73,7 @@ const PlayerOverlay = ({ players, editMode, handleCheckboxChange, teamChanges })
           <PlayerCard player={player} />
           {editMode && (
             <FormControlLabel
-              control={<Checkbox checked={teamChanges[player.PlayerID] ?? false} onChange={() => handleCheckboxChange(player.PlayerID)} />}
+              control={<Checkbox checked={teamChanges[player.player_id] ?? false} onChange={() => handleCheckboxChange(player.player_id)} />}
               label="Starter"
             />
           )}
@@ -93,7 +93,7 @@ const PlayerOverlay = ({ players, editMode, handleCheckboxChange, teamChanges })
           <PlayerCard player={player} />
           {editMode && (
             <FormControlLabel
-              control={<Checkbox checked={teamChanges[player.PlayerID] ?? false} onChange={() => handleCheckboxChange(player.PlayerID)} />}
+              control={<Checkbox checked={teamChanges[player.player_id] ?? false} onChange={() => handleCheckboxChange(player.player_id)} />}
               label="Starter"
             />
           )}
@@ -113,7 +113,7 @@ const PlayerOverlay = ({ players, editMode, handleCheckboxChange, teamChanges })
           <PlayerCard player={player} />
           {editMode && (
             <FormControlLabel
-              control={<Checkbox checked={teamChanges[player.PlayerID] ?? false} onChange={() => handleCheckboxChange(player.PlayerID)} />}
+              control={<Checkbox checked={teamChanges[player.player_id] ?? false} onChange={() => handleCheckboxChange(player.player_id)} />}
               label="Starter"
             />
           )}

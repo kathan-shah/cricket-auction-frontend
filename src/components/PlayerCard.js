@@ -13,15 +13,15 @@ const PlayerCard = ({ player }) => {
     >
       <CardMedia
         component="img"
-        image={`/assets/images/${player.Team}-logo.png`}
-        alt={player.PlayerName}
+        image={`/assets/images/${player.player_team}-logo.png`}
+        alt={player.player_name}
         sx={{
           width: '50px',
           height: '50px',
           margin: '0 auto',
         }}
       />
-      <Typography variant="caption">{player.PlayerName}</Typography>
+      <Typography variant="caption">{player.player_name}</Typography>
     </Box>
   );
 };
